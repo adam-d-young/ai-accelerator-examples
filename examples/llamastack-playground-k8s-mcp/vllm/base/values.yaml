@@ -1,5 +1,18 @@
-fullnameOverride: qwen3-8b
+fullnameOverride: qwen2-1.5b
 
 model:
-  uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen3-8b
-  modelNameOverride: qwen3-8b
+  uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2-1.5b-instruct
+  modelNameOverride: qwen2-1.5b
+
+# CPU-friendly configuration
+resources:
+  limits:
+    cpu: "4"
+    memory: "8Gi"
+  requests:
+    cpu: "2"
+    memory: "4Gi"
+
+# Disable GPU requirements
+accelerator:
+  enabled: false
