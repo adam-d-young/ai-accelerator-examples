@@ -1,5 +1,9 @@
 fullnameOverride: qwen2-1.5b
 
+# Force CPU-only deployment
+deploymentMode: RawDeployment
+runtimeType: cpu
+
 model:
   uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2-1.5b-instruct
   modelNameOverride: qwen2-1.5b
@@ -13,6 +17,23 @@ resources:
     cpu: "2"
     memory: "4Gi"
 
-# Disable GPU requirements
+# Explicitly disable GPU/accelerator
 accelerator:
   enabled: false
+
+# Override ServingRuntime to use CPU version
+servingRuntime:
+  name: vllm-cpu
+  image: quay.io/modh/vllm:v0.4.2
+  
+# CPU-specific vLLM arguments
+vllm:
+  args:
+    - --model
+    - qwen2-1.5b
+    - --port
+    - "8080"
+    - --tensor-parallel-size
+    - "1"
+    - --device
+    - cpu
