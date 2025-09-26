@@ -1,48 +1,40 @@
 fullnameOverride: qwen2-1.5b
 
+# Force RawDeployment mode (not serverless)
+deploymentMode: RawDeployment
+
+# Use CPU-only image instead of CUDA image
+image:
+  image: 'quay.io/modh/vllm'
+  tag: 'v0.4.2'
+
 # Model configuration
 model:
   uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2-1.5b-instruct
   modelNameOverride: qwen2-1.5b
+  # Remove GPU-specific arguments and add CPU-friendly ones
   args:
-    - --served-model-name=qwen2-1.5b
-    - --tensor-parallel-size=1
+    - "--tensor-parallel-size=1"
+    - "--device=cpu"
 
-# Force RawDeployment mode (not serverless)
-deploymentMode: RawDeployment
-
-# Override the default ServingRuntime to remove GPU dependencies
-servingRuntime:
-  template:
-    metadata:
-      annotations:
-        opendatahub.io/template-display-name: "vLLM CPU ServingRuntime for KServe"
-        opendatahub.io/recommended-accelerators: "[]"
-    spec:
-      containers:
-        - name: kserve-container
-          image: quay.io/modh/vllm:v0.4.2
-          command:
-            - python
-            - -m
-            - vllm.entrypoints.openai.api_server
-          args:
-            - --port=8080
-            - --model=/mnt/models
-            - --tensor-parallel-size=1
-          env:
-            - name: HF_HOME
-              value: /tmp/hf_home
-
-# CPU-only resource configuration - NO GPU
+# CPU-only resource configuration - NO GPU requests
 resources:
-  limits:
-    cpu: "4"
-    memory: "8Gi"
   requests:
     cpu: "2"
     memory: "4Gi"
+  limits:
+    cpu: "4"
+    memory: "8Gi"
 
-# Remove all GPU-related configurations
+# Remove GPU tolerations completely
 tolerations: []
+
+# Clear node selector
 nodeSelector: {}
+
+# ServingRuntime args for CPU deployment
+servingRuntime:
+  args:
+    - --port=8080
+    - --model=/mnt/models
+    - --tensor-parallel-size=1
