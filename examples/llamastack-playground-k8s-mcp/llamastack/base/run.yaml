@@ -61,6 +61,9 @@ providers:
     config:
       url: "http://qwen2-5-0-5b-instruct-cpu-predictor.ai-agent-vllm.svc.cluster.local:8080/v1"
       tls_verify: false
+      timeout: 300.0
+      read_timeout: 300.0
+      connect_timeout: 60.0
   - provider_id: sentence-transformers
     provider_type: inline::sentence-transformers
   tool_runtime:
@@ -110,3 +113,4 @@ tool_groups:
 #   provider_id: rag-runtime
 server:
   port: 8321
+  timeout: 300.0
