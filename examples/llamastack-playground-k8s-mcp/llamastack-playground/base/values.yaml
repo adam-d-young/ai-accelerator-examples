@@ -2,4 +2,4 @@ fullnameOverride: llamastack-playground
 
 llamastack:
   endpointUrl: http://llamastack-service.ai-agent-lls.svc.cluster.local:8321
-  defaultModel: qwen2-1.5b
+  defaultModel: qwen2-1-5b-instruct-cpu

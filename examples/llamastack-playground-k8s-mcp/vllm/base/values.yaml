@@ -1,4 +1,4 @@
-fullnameOverride: qwen2-1.5b
+fullnameOverride: qwen2-1-5b-instruct-cpu
 
 model:
   mode: uri
