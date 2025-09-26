@@ -4,9 +4,11 @@ model:
   mode: uri
   uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
   args:
-    - --max-model-len=8000
+    - --max-model-len=4000
     - --enable-auto-tool-choice
     - --tool-call-parser=hermes
+    - --enforce-eager
+    - --disable-log-stats
 
 deploymentMode: RawDeployment
 
