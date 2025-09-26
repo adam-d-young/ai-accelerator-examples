@@ -1,5 +1,33 @@
-fullnameOverride: qwen3-8b
+fullnameOverride: qwen2-1.5b
 
 model:
-  uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen3-8b
-  modelNameOverride: qwen3-8b
+  mode: uri
+  uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2-1.5b-instruct
+  args:
+    - --max-model-len=2000
+
+deploymentMode: RawDeployment
+
+endpoint:
+  externalRoute:
+    enabled: false
+
+# Use the CPU-optimized vLLM image (same as 3scale example)
+image:
+  image: quay.io/rh-aiservices-bu/vllm-cpu-openai-ubi9
+  tag: "0.3"
+  runtimeVersionOverride: 0.7.3
+
+# Remove GPU tolerations (same as 3scale example)
+tolerations: []
+
+# CPU resources with explicit null for nvidia.com/gpu (same as 3scale example)
+resources:
+  requests:
+    cpu: '2'
+    memory: 4Gi
+    nvidia.com/gpu: null
+  limits:
+    cpu: '4'
+    memory: 8Gi
+    nvidia.com/gpu: null

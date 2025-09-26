@@ -23,9 +23,9 @@ models:
   #   provider_model_id: llama-3-2-3b
   #   model_type: llm
   - metadata: {}
-    model_id: llama-4-scout-17b-16e-w4a16
-    provider_id: llama-4-scout-17b-16e-w4a16-maas
-    provider_model_id: llama-4-scout-17b-16e-w4a16
+    model_id: qwen2-1.5b
+    provider_id: vllm
+    provider_model_id: qwen2-1.5b
     model_type: llm
   # - metadata:
   #     embedding_dimension: 384
@@ -56,13 +56,11 @@ providers:
   #   config:
   #     url: "https://qwen3-8b.ai-agent-vllm.svc.cluster.local/v1"
   #     tls_verify: false
-  - provider_id: llama-4-scout-17b-16e-w4a16-maas
+  - provider_id: vllm
     provider_type: "remote::vllm"
     config:
-      url: "https://llama-4-scout-17b-16e-w4a16-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1"
-      max_tokens: 110000
-      api_token: ${env.LLAMA_4_SCOUT_17B_16E_W4A16_API_TOKEN}
-      tls_verify: true
+      url: "http://qwen2-1.5b.ai-agent-vllm.svc.cluster.local/v1"
+      tls_verify: false
   - provider_id: sentence-transformers
     provider_type: inline::sentence-transformers
   tool_runtime:
