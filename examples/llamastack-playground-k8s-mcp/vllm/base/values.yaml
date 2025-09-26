@@ -1,8 +1,8 @@
-fullnameOverride: qwen2-1-5b-instruct-cpu
+fullnameOverride: qwen2-5-0-5b-instruct-cpu
 
 model:
   mode: uri
-  uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2-1.5b-instruct
+  uri: oci://quay.io/redhat-ai-services/modelcar-catalog:qwen2.5-0.5b-instruct
   args:
     - --max-model-len=2000
 

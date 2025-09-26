@@ -23,9 +23,9 @@ models:
   #   provider_model_id: llama-3-2-3b
   #   model_type: llm
   - metadata: {}
-    model_id: qwen2-1-5b-instruct-cpu
+    model_id: qwen2-5-0-5b-instruct-cpu
     provider_id: vllm
-    provider_model_id: qwen2-1-5b-instruct-cpu
+    provider_model_id: qwen2-5-0-5b-instruct-cpu
     model_type: llm
   # - metadata:
   #     embedding_dimension: 384
@@ -59,7 +59,7 @@ providers:
   - provider_id: vllm
     provider_type: "remote::vllm"
     config:
-      url: "http://qwen2-1-5b-instruct-cpu.ai-agent-vllm.svc.cluster.local/v1"
+      url: "http://qwen2-5-0-5b-instruct-cpu.ai-agent-vllm.svc.cluster.local/v1"
       tls_verify: false
   - provider_id: sentence-transformers
     provider_type: inline::sentence-transformers
