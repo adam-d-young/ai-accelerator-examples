@@ -14,7 +14,7 @@ models:
   - metadata: {}
     model_id: qwen
     provider_id: vllm
-    provider_model_id: qwen3-8b
+    provider_model_id: Qwen/Qwen3-8B
     model_type: llm
 providers:
   scoring:
