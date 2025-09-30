@@ -38,7 +38,7 @@ providers:
     - provider_id: vllm
       provider_type: "remote::vllm"
       config:
-        url: "http://qwen3-8b.ai-agent-vllm.svc.cluster.local:8080/v1"
+        url: "https://qwen3-8b-predictor.ai-agent-vllm.svc.cluster.local:8080/v1"
         tls_verify: false
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
