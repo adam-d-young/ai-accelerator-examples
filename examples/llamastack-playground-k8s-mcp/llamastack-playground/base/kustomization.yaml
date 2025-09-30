@@ -5,7 +5,7 @@ namespace: ai-agent-lls
 
 helmCharts:
 - name: llamastack-playground
-  releaseName: granite
+  releaseName: llamastack-playground
   version: 0.1.0
   repo: https://redhat-ai-services.github.io/helm-charts/
   valuesFile: values.yaml
