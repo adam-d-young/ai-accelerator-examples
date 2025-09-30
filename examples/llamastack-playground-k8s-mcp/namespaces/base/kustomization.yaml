@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - lls-namespace.yaml
   - mcp-namespace.yaml
-  - vllm-namespace.yaml
+

@@ -6,10 +6,3 @@ namespace: ai-agent-lls
 resources:
   - llamastack.yaml
 
-configMapGenerator:
-  - name: llama-stack-config
-    files:
-      - run.yaml
-
-configurations:
-  - cm-name-replacement.yaml
