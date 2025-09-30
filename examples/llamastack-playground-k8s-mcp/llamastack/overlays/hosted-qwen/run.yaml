@@ -35,11 +35,11 @@ providers:
           type: sqlite
           db_path: ${env.SQLITE_STORE_DIR:=~/.llama/distributions/starter}/responses_store.db
   inference:
-  - provider_id: vllm
-    provider_type: "remote::vllm"
-    config:
-      url: "https://qwen3-8b.ai-agent-vllm.svc.cluster.local/v1"
-      tls_verify: false
+    - provider_id: vllm
+      provider_type: "remote::vllm"
+      config:
+        url: "https://qwen3-8b.ai-agent-vllm.svc.cluster.local/v1"
+        tls_verify: false
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
   tool_runtime:
