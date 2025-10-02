@@ -11,5 +11,8 @@ configMapGenerator:
     files:
       - run.yaml
 
+patches:
+  - path: llamastack-patch.yaml
+
 configurations:
   - cm-name-replacement.yaml
