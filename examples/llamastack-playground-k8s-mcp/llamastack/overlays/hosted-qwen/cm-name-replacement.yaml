@@ -4,4 +4,3 @@ nameReference:
     fieldSpecs:
       - kind: LlamaStackDistribution
         path: spec/server/userConfig/configMapName
-

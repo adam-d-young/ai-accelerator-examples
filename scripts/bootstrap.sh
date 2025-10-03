@@ -37,41 +37,38 @@ choose_example_option(){
 
     echo
 
-    # Find the first directory matching the pattern ${chosen_example_path}/*/overlays
-    overlays_parent_dir=$(find "${chosen_example_path}" -mindepth 2 -maxdepth 2 -type d -name "overlays" | head -n 1)
+    # Find all unique overlay options across all overlays directories
+    all_overlay_options=$(find "${chosen_example_path}" -mindepth 3 -maxdepth 3 -type d -path "*/overlays/*" -exec basename {} \; | sort -u)
     
-    if [ -n "$overlays_parent_dir" ]; then
-        overlays_dir="$overlays_parent_dir"
-        
-        echo "Found overlays directory: ${overlays_dir}"
-        
-        overlay_count=$(find "$overlays_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
-        if [ "$overlay_count" -gt 1 ]; then
-            # multiple overlay options found
-            # let the user choose which one to deploy
-            echo "Multiple overlay options found in ${overlays_dir}:"
-            PS3="Choose an option you wish to deploy?"
-            select chosen_option in $(basename -a ${overlays_dir}/*/);
-            do
-                test -n "${chosen_option}" && break;
-                echo ">>> Invalid Selection";
-            done
-            echo "You selected ${chosen_option}"
-        elif [ "$overlay_count" -eq 1 ]; then
-            # one overlay option found
-            # use the default one
-            chosen_option=$(basename $(find "$overlays_dir" -mindepth 1 -maxdepth 1 -type d))
-            echo "One overlay option found in ${overlays_dir}: ${chosen_option}"
-        else
-            echo "No overlay options found in ${overlays_dir}"
-            exit 2
-        fi
-
-        CHOSEN_EXAMPLE_OPTION_PATH="${chosen_example_path}/*/overlays/${chosen_option}"
-    else
+    if [ -z "$all_overlay_options" ]; then
         echo "No overlays folder was found matching pattern: ${chosen_example_path}/*/overlays"
         exit 2
     fi
+    unique_overlay_count=$(echo "$all_overlay_options" | wc -l)
+    
+    if [ "$unique_overlay_count" -gt 1 ]; then
+        # Multiple unique overlay options found across all directories
+        # let the user choose which one to deploy
+        echo "Multiple unique overlay options found across all directories:"
+        echo "$all_overlay_options"
+        echo
+        PS3="Choose an option you wish to deploy?"
+        select chosen_option in $all_overlay_options;
+        do
+            test -n "${chosen_option}" && break;
+            echo ">>> Invalid Selection";
+        done
+        echo "You selected ${chosen_option}"
+    elif [ "$unique_overlay_count" -eq 1 ]; then
+        # Only one unique overlay option found
+        chosen_option="$all_overlay_options"
+        echo "Only one unique overlay option found: ${chosen_option}"
+    else
+        echo "No overlay options found in any overlays directory"
+        exit 2
+    fi
+
+    CHOSEN_EXAMPLE_OPTION_PATH="${chosen_example_path}/*/overlays/${chosen_option}"
 }
 
 deploy_example(){

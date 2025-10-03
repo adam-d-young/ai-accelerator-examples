@@ -5,4 +5,3 @@ namespace: ai-agent-lls
 
 resources:
   - llamastack.yaml
-
