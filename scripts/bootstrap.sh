@@ -37,56 +37,13 @@ choose_example_option(){
 
     echo
 
-    # Find ALL directories matching the pattern ${chosen_example_path}/*/overlays
-    # Use a temporary file to handle multi-line output properly
-    temp_file=$(mktemp)
-    find "${chosen_example_path}" -mindepth 2 -maxdepth 2 -type d -name "overlays" | sort > "$temp_file"
+    # Find all unique overlay options across all overlays directories
+    all_overlay_options=$(find "${chosen_example_path}" -mindepth 3 -maxdepth 3 -type d -path "*/overlays/*" -exec basename {} \; | sort -u)
     
-    if [ ! -s "$temp_file" ]; then
-        rm "$temp_file"
+    if [ -z "$all_overlay_options" ]; then
         echo "No overlays folder was found matching pattern: ${chosen_example_path}/*/overlays"
         exit 2
     fi
-
-    echo "Found overlays directories:"
-    cat "$temp_file"
-    echo
-
-    # Find the overlays directory with the most options
-    best_overlays_dir=""
-    max_overlay_count=0
-    all_overlay_options=""
-
-    while IFS= read -r overlays_dir; do
-        overlay_count=$(find "$overlays_dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
-        echo "Directory ${overlays_dir} has ${overlay_count} overlay options"
-        
-        if [ "$overlay_count" -gt "$max_overlay_count" ]; then
-            max_overlay_count=$overlay_count
-            best_overlays_dir="$overlays_dir"
-        fi
-    done < "$temp_file"
-
-    if [ -z "$best_overlays_dir" ]; then
-        rm "$temp_file"
-        echo "No valid overlays directories found"
-        exit 2
-    fi
-
-    echo
-    echo "Using overlays directory with most options: ${best_overlays_dir} (${max_overlay_count} options)"
-    
-    # Get all unique overlay options across all overlays directories
-    all_overlay_options=""
-    while IFS= read -r overlays_dir; do
-        overlay_options=$(find "$overlays_dir" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
-        if [ -n "$overlay_options" ]; then
-            all_overlay_options="$all_overlay_options$overlay_options"$'\n'
-        fi
-    done < "$temp_file"
-    all_overlay_options=$(echo "$all_overlay_options" | sort -u | grep -v '^$')
-    
-    rm "$temp_file"
     unique_overlay_count=$(echo "$all_overlay_options" | wc -l)
     
     if [ "$unique_overlay_count" -gt 1 ]; then
