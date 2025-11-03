@@ -14,13 +14,17 @@ choose_example(){
     examples_dir=${EXAMPLES_DIR}
 
     echo
-    echo "Choose an example you wish to deploy?"
-    PS3="Please enter a number to select an example folder: "
+    echo "Choose an example you wish to deploy:"
+    PS3="Please enter a number to select an example folder (enter q to exit): "
 
     select chosen_example in $(find "${examples_dir}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort);
     do
-    test -n "${chosen_example}" && break;
-    echo ">>> Invalid Selection";
+        # Check if user wants to quit
+        if [[ "$REPLY" == [qQ] ]]; then
+            return 2 # exit code for q
+        fi
+        test -n "${chosen_example}" && break;
+        echo ">>> Invalid Selection";
     done
 
     echo "You selected ${chosen_example}"
@@ -41,29 +45,29 @@ choose_example_kustomize_option(){
     # Find all unique overlay options across all overlays directories
     all_overlay_options=$(find "${chosen_example_path}" -mindepth 3 -maxdepth 3 -type d -path "*/overlays/*" -exec basename {} \; | sort -u)
     
-    if [ -z "$all_overlay_options" ]; then
-        echo "No overlays folder was found matching pattern: ${chosen_example_path}/*/overlays"
-        exit 2
-    fi
-    unique_overlay_count=$(echo "$all_overlay_options" | wc -l)
-    
-    if [ "$unique_overlay_count" -gt 1 ]; then
-        # Multiple unique overlay options found across all directories
-        # let the user choose which one to deploy
-        echo "Multiple unique overlay options found across all directories:"
-        echo "$all_overlay_options"
-        echo
-        PS3="Choose an option you wish to deploy?"
-        select chosen_option in $all_overlay_options;
-        do
-            test -n "${chosen_option}" && break;
-            echo ">>> Invalid Selection";
-        done
-        echo "You selected ${chosen_option}"
-    elif [ "$unique_overlay_count" -eq 1 ]; then
-        # Only one unique overlay option found
-        chosen_option="$all_overlay_options"
-        echo "Only one unique overlay option found: ${chosen_option}"
+    if [ -n "$all_overlay_options" ]; then
+        unique_overlay_count=$(echo "$all_overlay_options" | wc -l)
+        
+        if [ "$unique_overlay_count" -gt 1 ]; then
+            # Multiple unique overlay options found across all directories
+            # let the user choose which one to deploy
+            echo "Multiple unique overlay options found:"
+            echo "$all_overlay_options"
+            echo
+            PS3="Choose an option you wish to deploy:"
+            select chosen_option in $all_overlay_options;
+            do
+                test -n "${chosen_option}" && break;
+                echo ">>> Invalid Selection";
+            done
+            echo "You selected ${chosen_option}"
+        elif [ "$unique_overlay_count" -eq 1 ]; then
+            # Only one unique overlay option found
+            chosen_option="$all_overlay_options"
+            echo "Only one unique overlay option found: ${chosen_option}"
+        fi
+
+        CHOSEN_EXAMPLE_OPTION_PATH="${chosen_example_path}/*/overlays/${chosen_option}"
     else
         if [ -n "${chosen_example_path}/helm-charts" ]; then
             echo "No overlays folder was found, but helm-charts folder was found"
@@ -75,7 +79,6 @@ choose_example_kustomize_option(){
         fi
     fi
 
-    CHOSEN_EXAMPLE_OPTION_PATH="${chosen_example_path}/*/overlays/${chosen_option}"
 }
 
 deploy_example(){
@@ -143,9 +146,17 @@ set_repo_branch(){
 main(){
     set_repo_url
     set_repo_branch
-    choose_example
-    choose_example_kustomize_option "${CHOSEN_EXAMPLE_PATH}"
-    deploy_example  "${CHOSEN_EXAMPLE_PATH}" "${CHOSEN_EXAMPLE_OPTION_PATH}"
+
+    while true; do
+        exit_code=0
+        choose_example || exit_code=$?
+        if [ "${exit_code:-0}" -eq 2 ]; then # user selected q/Q
+            echo "Exiting..."
+            break
+        fi
+        choose_example_kustomize_option "${CHOSEN_EXAMPLE_PATH}"
+        deploy_example  "${CHOSEN_EXAMPLE_PATH}" "${CHOSEN_EXAMPLE_OPTION_PATH}"
+    done
 }
 
 # check_oc_login
